@@ -1,3 +1,4 @@
 npm run build
-git commit -am "Update build"
+git add .
+git commit -m "Update build"
 git push
