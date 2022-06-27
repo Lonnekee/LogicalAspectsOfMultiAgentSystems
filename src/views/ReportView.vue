@@ -1,7 +1,7 @@
 <template>
   <div class="report">
     <iframe frameborder=”0″
-            width=”500″ height=”360″
+            width=”100%″ height=”100%″
             src=”https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf”>
     </iframe>
   </div>

@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as r,a as s}from"./index.dfc75f81.js";const o={},_={class:"report"},a=s("h1",null,"This is the report page",-1),i=[a];function n(c,p){return t(),r("div",_,i)}var l=e(o,[["render",n]]);export{l as default};
