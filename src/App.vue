@@ -14,7 +14,9 @@ import { RouterLink, RouterView } from 'vue-router'
     </div>
   </header>
 
-  <RouterView />
+  <div class="main">
+    <RouterView />
+  </div>
 </template>
 
 <style>
@@ -31,11 +33,6 @@ import { RouterLink, RouterView } from 'vue-router'
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
 }
 
 a,
@@ -90,6 +87,7 @@ nav a:first-of-type {
 
   header {
     display: flex;
+    width: 100px;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
   }
@@ -111,6 +109,10 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 1rem;
+  }
+
+  .main {
+    width: 900px;
   }
 }
 </style>
