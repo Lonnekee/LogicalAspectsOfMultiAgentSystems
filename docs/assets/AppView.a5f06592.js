@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as t,c as i,a}from"./index.e3e4b4cf.js";const s={},n={class:"application"},o=a("h1",null,"This is the page that will host the application.",-1),_=[o];function c(p,l){return t(),i("div",n,_)}var d=e(s,[["render",c]]);export{d as default};
