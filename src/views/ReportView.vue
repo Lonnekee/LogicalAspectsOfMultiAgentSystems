@@ -1,6 +1,9 @@
 <template>
   <div class="report">
-    <h1>This is the report page</h1>
+    <iframe frameborder=”0″
+            width=”500″ height=”360″
+            src=”https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf”>
+    </iframe>
   </div>
 </template>
 
