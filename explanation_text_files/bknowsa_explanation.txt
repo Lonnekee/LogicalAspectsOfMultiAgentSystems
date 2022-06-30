@@ -1,0 +1,27 @@
+bknowsa
+
+To ensure bknowsa, Bill should be able to dismiss all the decoy hands Ann includes.
+
+Bill is able to dismiss a hand if it includes one of his own cards.
+
+He knows that he and Ann cannot both have the same card.
+
+Therefore to ensure that Bill is able to dismiss all the decoy hands, all decoy hands should have at least one of Bill's cards.
+
+How can Ann ensure this without knowing which cards Bill has?
+
+The answer is simple: she should include more cards from the joint set of Bill's and Cath's cards than the number of cards Cath has.
+
+Namely if she included only as many cards from the joint set of Bill and Cath as the number of cards belonging to Cath, it could be that all the cards she includes belong to Cath and none belong to Bill.
+
+However if she includes at least one more than Cath's number of cards, Bill has to have at least one of his cards in the decoy hand.
+
+The joint set of Bill and Cath is known to Ann simply as the set of cards she does not possess.
+
+Therefore, the rule to derive from this is that Ann could include at least [Cath's hand size] + 1 of the cards that do not belong to her.
+
+This is equal to saying: each decoy hand has at most [decoy hand size] - [Cath's hand size] - 1 of the cards that do belong to Ann.
+
+Since Cath knows that each decoy hand has at most [decoy hand size] - [Cath's hand size] - 1 cards in common with the real hand, she can deduce that, if two options have more than that number of cards in common, neither can be the real hand.
+
+To prevent Cath from dismissing hands this way, Ann should ensure that none of the options have more than [decoy hand size] - [Cath's hand size] - 1 cards in common.
