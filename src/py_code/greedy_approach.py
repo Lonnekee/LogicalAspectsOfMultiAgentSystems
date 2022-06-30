@@ -58,34 +58,52 @@ class Rule_1:
 
 
 class Rule_2:
-    def __init__(self, nccs, n_cards):
+    def __init__(self, nccs, n_cards, C_hand_size):
         self.n_cards = n_cards
         self.nccs = nccs
-        self.rule_2_table = [[False, False, False] for i in range(nccs.get_number(2, 0))]
+        self.rule_2_table = [[False] * (C_hand_size + 2) for i in range(nccs.get_number(C_hand_size + 1, 0))]
         self.checks_needed = len(self.rule_2_table) * 3
         self.checks_set = 0
+        self.C_hand_size = C_hand_size
 
     def add_hand(self, hand):
         n_cards_in_hand = len(hand)
         n_cards_not_in_hand = self.n_cards - n_cards_in_hand
 
         cards_not_in_hand = [x for x in range(self.n_cards) if x not in hand]
-        
-        # pre-allocate a list for the checks
-        max_n_new_checks = n_cards_in_hand * n_cards_not_in_hand + (n_cards_not_in_hand - 1) * n_cards_not_in_hand // 2
-        new_checks = [None for i in range(max_n_new_checks)]
-        n_new_checks = 0
 
-        pairs = [(not_in_hand_card, hand_card, 0) if not_in_hand_card < hand_card else (hand_card, not_in_hand_card, 2) for hand_card in hand for not_in_hand_card in cards_not_in_hand]
-        pairs += [(cards_not_in_hand[i], cards_not_in_hand[j], 1) for i in range(n_cards_not_in_hand) for j in range(i + 1, n_cards_not_in_hand)]
+        possible_checks = []
 
-        for card0, card1, table_col_idx in pairs:
-            table_row_idx = self.nccs.get_index([card0, card1])
-            if not self.rule_2_table[table_row_idx][table_col_idx]:
-                new_checks[n_new_checks] = (table_row_idx, table_col_idx)
-                n_new_checks = n_new_checks + 1
+        # all possible combinations of the values 0 to n_cards_not_in_hand
+        # we can use this to get all possible combinations of the cards not in hand
+        comb_idcs_list_list = get_combs(n_cards_not_in_hand)
         
-        new_checks = new_checks[:n_new_checks]
+        # for the combinations with one card from the hand, we only need combinations of length C_hand_size
+        comb_idcs_list = comb_idcs_list_list[self.C_hand_size-1]
+
+        for comb_indcs in comb_idcs_list:
+            comb = [cards_not_in_hand[idx] for idx in comb_indcs]
+            i = 0
+            for card_in_hand in hand:
+                while i < len(comb) and comb[i] < card_in_hand:
+                    # print(i, comb, card_in_hand)
+                    i += 1
+                comb_ = comb[:i] + [card_in_hand] + comb[i:]
+                row_idx = self.nccs.get_index(comb_)
+                col_idx = i + 1
+                # print(comb_)
+                possible_checks.append((row_idx, col_idx))
+
+        # for the combinations with only not-in-hand cards, we need combinations with length C_hand_size + 1
+        comb_idcs_list = comb_idcs_list_list[self.C_hand_size]
+
+        for comb_indcs in comb_idcs_list:
+            comb = [cards_not_in_hand[idx] for idx in comb_indcs]
+            row_idx = self.nccs.get_index(comb)
+            col_idx = 0
+            possible_checks.append((row_idx, col_idx))
+
+        new_checks = [pc for pc in possible_checks if not self.rule_2_table[pc[0]][pc[1]]]
 
         self.set_checks(new_checks, True)
 
@@ -104,12 +122,12 @@ class Rule_2:
         self.set_checks(checks, False)
 
 
-nA, nB, nC = [3, 3, 1]
+nA, nB, nC = [15, 6, 2]
 ncards = nA + nB + nC
 max_overlap = nA - nC - 1
 nccs = NCCS(ncards)
 r1 = Rule_1(nccs, max_overlap, ncards, nA)
-r2 = Rule_2(nccs, ncards)
+r2 = Rule_2(nccs, ncards, nC)
 
 possible_hands = get_combs(ncards)[nA - 1]
 

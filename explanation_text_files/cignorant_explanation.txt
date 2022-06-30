@@ -1,0 +1,34 @@
+cignorant
+
+Cath should not learn any of the cards of Ann, nor any of the cards of Bill.
+
+She has learned a card of Ann if that card is present in all of the options Ann presents and Cath considers possible.
+
+She has learned a card of Bill if that card is not present in any of the options Ann presents and Cath considers possible, and Cath does not have that card.
+
+The latter is true because if a card is not present in any of the options Cath knows that the card does not belong to Ann, and if it does not belong to Ann nor to Cath, it belongs to Bill.
+
+Cath considers an option possible if it does not contain any of her cards.
+
+Therefore, the situations in which Cath learned a card of Ann or Bill can be rephrased as follows:
+
+Cath has learned a card of Ann, x, if for all presented options o, if intersection(c, o) == ø then x in o
+
+Cath has learned a card of Bill, x, if for all presented options o, if intersection(c, 0) == ø then x not in o.
+
+Therefore,
+
+Cath has not the owner of a certain card x if there exists a presented option o with intersection(c, o) == ø such that x in o,
+and if there exists a presented option o with intersection(c, o) = ø such that x not in o.
+
+Since Ann does not know Cath's hand c, you could say that she has to ensure the above statement for any hand that she considers a possible hand of Cath.
+
+This would come down to all the possible combinations of the cards that are not Ann's.
+
+This approach is dangerous however because it could give Cath information about Ann's hand.
+
+If Ann only ensures that the statement holds for any combinations of #C cards that are not Ann's, there could be combinations of #C cards for which the statement does not hold.
+
+If that is the case, Cath can deduce that Ann didn't consider the combination a possible hand of Cath because it includes one of Ann's cards.
+
+That is why Ann should ensure the statement not just for the combinations that she considers possible hands of Cath but for all combinations of the same size as Cath's hand
