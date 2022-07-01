@@ -122,7 +122,7 @@ class Rule_2:
         self.set_checks(checks, False)
 
 
-nA, nB, nC = [15, 6, 2]
+nA, nB, nC = [3,3,1]
 ncards = nA + nB + nC
 max_overlap = nA - nC - 1
 nccs = NCCS(ncards)
