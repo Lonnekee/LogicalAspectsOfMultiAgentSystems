@@ -1,8 +1,6 @@
 <template>
   <div class="report">
-    <iframe class="pdf" width="100%" height="100%"
-            :src=reportURL>
-    </iframe>
+    <a href="https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf" target="_blank">Download report here</a>
   </div>
 </template>
 
@@ -18,7 +16,7 @@ export default {
   },
   mounted() {
     axios.get(this.reportURL)
-        .then(response => this.report = response)
+        .then(response => { this.report = response.data; })
   }
 }
 </script>
