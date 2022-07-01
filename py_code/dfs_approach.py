@@ -199,6 +199,8 @@ if __name__ == "__main__":
     
     if succ:
         print('solution found! (dfs approach)')
+
+        print('\nOptions for Anne to present:')
         for opt in options:
             print('\t{}'.format(opt))
 
