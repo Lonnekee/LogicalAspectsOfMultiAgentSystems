@@ -137,7 +137,7 @@ def run_dfs_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
     presented_options = [(None, true_hand, None, None)]
 
     possible_hands = get_combs(n_cards_A, n_cards_total)
-    # print(len(possible_hands))
+    
     i = 0
     j = 0
     while True:
@@ -167,7 +167,6 @@ def run_dfs_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
         r1.remove_checks(removed_hand[2])
         r2.remove_checks(removed_hand[3])
         i = removed_hand[0] + 1
-        print('backtrack no. {}: removed hand idx {} out of {} possible hands, removed hand {}, remaining options {}'.format(j, i - 1, len(possible_hands), removed_hand[1], len(presented_options)))
         j += 1
     return (False, [])
 
@@ -199,6 +198,8 @@ if __name__ == "__main__":
     
     if succ:
         print('solution found! (dfs approach)')
+
+        print('\nOptions for Anne to present:')
         for opt in options:
             print('\t{}'.format(opt))
 
