@@ -202,13 +202,25 @@ if __name__ == "__main__":
         for opt in options:
             print('\t{}'.format(opt))
 
+        possible_hands_B = get_combs(n_cards_B, n_cards_total)
+
+        for i, phb in enumerate(possible_hands_B):
+            print('\nPossible hand of B {}: {}'.format(i, phb))
+            filtered = options
+            for card in phb:
+                filtered = list(filter(lambda x: card not in x, filtered))
+                print(card, filtered)
+            for option in filtered:
+                print(option)
+
+
         possible_hands_C = get_combs(n_cards_C, n_cards_total)
 
         for i, phc in enumerate(possible_hands_C):
             print('\nPossible hand of C {}: {}'.format(i, phc))
             filtered = options
             for card in phc:
-                filtered = filter(lambda x: card not in x, options)
+                filtered = list(filter(lambda x: card not in x, options))
             for option in filtered:
                 print(option)
     else:
