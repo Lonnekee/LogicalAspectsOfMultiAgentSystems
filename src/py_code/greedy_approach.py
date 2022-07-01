@@ -1,109 +1,102 @@
-class NCCS:
-    def __init__(self, n_cards):
-        nccs = [[] for i in range(n_cards)]
-        nccs[1] = [n_cards - i for i in range(n_cards + 1)]
-        for ncinc in range(2, len(nccs)):
-            nccs[ncinc] = [sum(nccs[ncinc-1][i+1:]) for i in range(n_cards - ncinc + 2)]
-        self.nccs = nccs
+def get_combs(n_cards_in_comb, n_cards_total):
+    combs = [[] for i in range(n_cards_total)]
+    combs[0] = [[[]] for i in range(n_cards_total)]
+    for i in range(1, n_cards_total):
+        combs[i] = [[[j] + x for j in range(k + 1, n_cards_total) for x in combs[i-1][j]] for k in range(n_cards_total)]
+    combs = [[[j] + comb for j in range(n_cards_total) for comb in combs[i][j]] for i in range(n_cards_total)]
+    return combs[n_cards_in_comb - 1]
 
-    def get_number(self, number_of_cards_in_the_combination, minimum_starting_number):
-        return self.nccs[number_of_cards_in_the_combination][minimum_starting_number]
+class Table:
+    def __init__(self, n_cards_in_comb, n_cards_total, n_columns):
+        self.n_cards_in_comb = n_cards_in_comb
+        self.n_cards_total = n_cards_total
+        self.n_columns = n_columns
 
-    def get_index(self, comb):
-        nccs = self.nccs
-        lc = len(comb)
-        combinations_after = 0
-        for i in range(lc):
-            v = comb[i]
-            combinations_after += nccs[lc-i][v + 1]
-        idx = nccs[lc][0] - 1 - combinations_after
-        return idx
+        all_possible_combs = get_combs(n_cards_in_comb, n_cards_total)
+        self.table = {str(comb): [None] * n_columns for comb in all_possible_combs}
 
-def get_combs(n_cards):
-    n_digits = n_cards
-    combs = [[] for i in range(n_digits)]
-    combs[0] = [[[]] for i in range(n_digits)]
-    for i in range(1, n_digits):
-        combs[i] = [[[j] + x for j in range(k + 1, n_digits) for x in combs[i-1][j]] for k in range(n_digits)]
+        self.n_rows = len(all_possible_combs)
 
-    combs = [[[j] + comb for j in range(n_digits) for comb in combs[i][j]] for i in range(n_digits)]
-    return combs
+    def is_valid_idx(self, comb, col_idx):
+        if comb not in self.table:
+            print('Combination {} not in table keys {}'.format(comb, self.table.keys()))
+            exit(-1)
+        if col_idx >= len(self.table[comb]):
+            print('Col_idx {} too high for self.table[{}] (length: {})'.format(col_idx, comb, len(self.table[comb])))
+            exit(-2)
+
+    def get(self, comb, col_idx):
+        comb = str(comb)
+        self.is_valid_idx(comb, col_idx)
+        return self.table[comb][col_idx]
+
+    def set(self, comb, col_idx, value):
+        comb = str(comb)
+        self.is_valid_idx(comb, col_idx)
+        self.table[comb][col_idx] = value
+
+    def set_list(self, comb_col_idx_pairs, value):
+        for comb, col_idx in comb_col_idx_pairs:
+            self.set(comb, col_idx, value)
+
+    def get_size(self):
+        return self.n_rows * self.n_columns
 
 class Rule_1:
-    def __init__(self, nccs, max_overlap, n_cards, cards_per_hand):
-        self.n_cards = n_cards
-        self.nccs = nccs
-        self.cards_per_comb = max_overlap + 1
-        self.rule_1_table = [False for i in range(nccs.get_number(self.cards_per_comb, 0))]
-        self.comb_idcs_list = get_combs(cards_per_hand)[self.cards_per_comb-1]
+    def __init__(self, n_cards_in_hand, n_cards_in_comb, n_cards_total):
+        self.table = Table(n_cards_in_comb, n_cards_total, 1)
+        self.all_possible_index_combs = get_combs(n_cards_in_comb, n_cards_in_hand)
 
     def add_hand(self, hand):
-        checks = [None] * len(self.comb_idcs_list)
-        for i, comb_idcs in enumerate(self.comb_idcs_list):
-            comb = [hand[comb_idx] for comb_idx in comb_idcs]
-            table_idx = self.nccs.get_index(comb)
-            if self.rule_1_table[table_idx]:
+        checks = [None] * len(self.all_possible_index_combs)
+        
+        for i, index_comb in enumerate(self.all_possible_index_combs):
+            comb = [hand[idx] for idx in index_comb]
+            if self.table.get(comb, 0):
                 return (False, [])
-                
-            checks[i] = table_idx
+            checks[i] = (comb, 0)
 
-        for check in checks:
-            self.rule_1_table[check] = True
+        self.table.set_list(checks, True)
 
         return (True, checks)
-
-    def remove_checks(self, checks):
-        for row_idx, col_idx in checks:
-            self.rule_1_table[row_idx][col_idx] = False
-
-
+            
 class Rule_2:
-    def __init__(self, nccs, n_cards, C_hand_size):
-        self.n_cards = n_cards
-        self.nccs = nccs
-        self.rule_2_table = [[False] * (C_hand_size + 2) for i in range(nccs.get_number(C_hand_size + 1, 0))]
-        self.checks_needed = len(self.rule_2_table) * 3
+    def __init__(self, n_cards_in_hand, n_cards_C, n_cards_total):
+        self.n_cards_total = n_cards_total
+
+        n_cards_in_comb = n_cards_C + 1
+        n_columns = n_cards_C + 2
+        self.table = Table(n_cards_in_comb, n_cards_total, n_columns)
+
+        n_cards_not_in_hand = n_cards_total - n_cards_in_hand
+
+        self.all_possible_index_combs_for_with_hand_card = get_combs(n_cards_C, n_cards_not_in_hand)
+        self.all_possible_index_combs_for_without_hand_card = get_combs(n_cards_C + 1, n_cards_not_in_hand)
+
         self.checks_set = 0
-        self.C_hand_size = C_hand_size
+        self.checks_needed = self.table.get_size()
 
     def add_hand(self, hand):
-        n_cards_in_hand = len(hand)
-        n_cards_not_in_hand = self.n_cards - n_cards_in_hand
-
-        cards_not_in_hand = [x for x in range(self.n_cards) if x not in hand]
-
         possible_checks = []
 
-        # all possible combinations of the values 0 to n_cards_not_in_hand
-        # we can use this to get all possible combinations of the cards not in hand
-        comb_idcs_list_list = get_combs(n_cards_not_in_hand)
-        
-        # for the combinations with one card from the hand, we only need combinations of length C_hand_size
-        comb_idcs_list = comb_idcs_list_list[self.C_hand_size-1]
+        cards_not_in_hand = [x for x in range(self.n_cards_total) if x not in hand]
 
-        for comb_indcs in comb_idcs_list:
-            comb = [cards_not_in_hand[idx] for idx in comb_indcs]
-            i = 0
+        for idx_comb in self.all_possible_index_combs_for_with_hand_card:
+            comb = [cards_not_in_hand[idx] for idx in idx_comb]
+            hand_card_insertion_idx = 0
             for card_in_hand in hand:
-                while i < len(comb) and comb[i] < card_in_hand:
-                    # print(i, comb, card_in_hand)
-                    i += 1
-                comb_ = comb[:i] + [card_in_hand] + comb[i:]
-                row_idx = self.nccs.get_index(comb_)
-                col_idx = i + 1
-                # print(comb_)
-                possible_checks.append((row_idx, col_idx))
+                while hand_card_insertion_idx < len(comb) and comb[hand_card_insertion_idx] < card_in_hand:
+                    hand_card_insertion_idx += 1
+                
+                # insert hand card in combinaton of non-hand cards
+                comb_ = comb[:hand_card_insertion_idx] + [card_in_hand] + comb[hand_card_insertion_idx:]
+                possible_checks.append((comb_, hand_card_insertion_idx + 1))
 
-        # for the combinations with only not-in-hand cards, we need combinations with length C_hand_size + 1
-        comb_idcs_list = comb_idcs_list_list[self.C_hand_size]
+        for idx_comb in self.all_possible_index_combs_for_without_hand_card:
+            comb = [cards_not_in_hand[idx] for idx in idx_comb]
+            possible_checks.append((comb, 0))
 
-        for comb_indcs in comb_idcs_list:
-            comb = [cards_not_in_hand[idx] for idx in comb_indcs]
-            row_idx = self.nccs.get_index(comb)
-            col_idx = 0
-            possible_checks.append((row_idx, col_idx))
-
-        new_checks = [pc for pc in possible_checks if not self.rule_2_table[pc[0]][pc[1]]]
+        new_checks = [pc for pc in possible_checks if not self.table.get(pc[0], pc[1])]
 
         self.set_checks(new_checks, True)
 
@@ -112,8 +105,7 @@ class Rule_2:
     def set_checks(self, checks_list, truth_value):
         n_checks = len(checks_list)
         self.checks_set += n_checks if truth_value else - n_checks
-        for table_row_idx, table_col_idx in checks_list:
-            self.rule_2_table[table_row_idx][table_col_idx] = truth_value
+        self.table.set_list(checks_list, truth_value)
 
     def satisfied(self):
         return self.checks_set == self.checks_needed
@@ -121,29 +113,56 @@ class Rule_2:
     def remove_checks(self, checks):
         self.set_checks(checks, False)
 
+def run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
+    n_cards_total = n_cards_A + n_cards_B + n_cards_C
+    max_overlap = n_cards_A - n_cards_C - 1
 
-nA, nB, nC = [15, 6, 2]
-ncards = nA + nB + nC
-max_overlap = nA - nC - 1
-nccs = NCCS(ncards)
-r1 = Rule_1(nccs, max_overlap, ncards, nA)
-r2 = Rule_2(nccs, ncards, nC)
+    r1 = Rule_1(n_cards_A, max_overlap + 1, n_cards_total)
+    r2 = Rule_2(n_cards_A, n_cards_C, n_cards_total)
 
-possible_hands = get_combs(ncards)[nA - 1]
+    r1.add_hand(true_hand)
+    r2.add_hand(true_hand)
 
-presented_options = []
+    presented_options = [true_hand]
 
-for hand in possible_hands:
-    allowed, _ = r1.add_hand(hand)
-    if not allowed:
-        continue
-    succ, _ = r2.add_hand(hand)
-    presented_options.append(hand)
-    if succ:
-        print('solution found! (greedy approach)')
-        for opt in presented_options:
-            print('\t{}'.format(opt))
+    possible_hands = get_combs(n_cards_A, n_cards_total)
+
+    for hand in possible_hands:
+        # are we allowed to add this decoy hand to our list of options according to rule 1?
+        allowed, _ = r1.add_hand(hand)
+        if not allowed:
+            continue
+
+        presented_options.append(hand)
+
+        # after adding this hand to our list of options, does rule 2 tell us we successfully created enough insecurity for Cath?
+        succ, _ = r2.add_hand(hand)
+        if succ:
+            return (True, presented_options)
+
+    return (False, [])
+
+if __name__ == "__main__":
+    from sys import argv
+    
+    if len(argv) < 2 or not (len(argv) != 4 or len(argv) != 4 + int(argv[1])):
+        print("not the right amount of arguments.\nuse: python3 {} n_cards_A n_cards_B n_cards_C [true cards of A]".format(argv[0]))
         exit(0)
 
-print('no solution (greedy approach)')
-exit(-1)
+    args = [int(a) for a in argv[1:]]
+
+    n_cards_A, n_cards_B, n_cards_C = args[:3]
+
+    if len(args) > 3:
+        true_hand_A = args[3:]
+    else:
+        true_hand_A = list(range(n_cards_A))
+
+    succ, options = run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand_A)
+    
+    if succ:
+        print('solution found! (greedy approach)')
+        for opt in options:
+            print('\t{}'.format(opt))
+    else:
+        print('no solution (greedy approach)')
