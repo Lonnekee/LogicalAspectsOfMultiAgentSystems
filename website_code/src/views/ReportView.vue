@@ -1,7 +1,7 @@
 <template>
   <div class="report">
     <iframe class="pdf" width="100%" height="100%"
-            :src="reportURL">
+            :src=reportURL>
     </iframe>
   </div>
 </template>
