@@ -1,13 +1,19 @@
 <template>
   <div class="report">
     <iframe class="pdf" width="100%" height="100%"
-            src="https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf">
+            :src="reportURL">
     </iframe>
   </div>
 </template>
 
 <script>
-
+export default {
+  data() {
+    return {
+      reportURL: "https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf"
+    }
+  }
+}
 </script>
 
 <style>
