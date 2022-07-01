@@ -7,11 +7,18 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
+      report: null,
       reportURL: "report.pdf" // https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf
     }
+  },
+  mounted() {
+    axios.get(this.reportURL)
+        .then(response => this.report = response)
   }
 }
 </script>
