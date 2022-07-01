@@ -121,7 +121,7 @@ class Rule_2:
     def remove_checks(self, checks):
         self.set_checks(checks, False)
 
-def run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
+def run_dfs_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
     n_cards_total = n_cards_A + n_cards_B + n_cards_C
     max_overlap = n_cards_A - n_cards_C - 1
 
@@ -137,7 +137,9 @@ def run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
     presented_options = [(None, true_hand, None, None)]
 
     possible_hands = get_combs(n_cards_A, n_cards_total)
+    # print(len(possible_hands))
     i = 0
+    j = 0
     while True:
         while i < len(possible_hands):
             # possibly add hand possible_hands[i]
@@ -165,6 +167,8 @@ def run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
         r1.remove_checks(removed_hand[2])
         r2.remove_checks(removed_hand[3])
         i = removed_hand[0] + 1
+        print('backtrack no. {}: removed hand idx {} out of {} possible hands, removed hand {}, remaining options {}'.format(j, i - 1, len(possible_hands), removed_hand[1], len(presented_options)))
+        j += 1
     return (False, [])
 
 if __name__ == "__main__":
@@ -181,21 +185,31 @@ if __name__ == "__main__":
         exit(0)
 
     n_cards_A, n_cards_B, n_cards_C = args[:3]
+    n_cards_total = n_cards_A + n_cards_B + n_cards_C
 
     if len(args) > 3:
-        n_total = n_cards_A + n_cards_B + n_cards_C
-        if any([a >= n_total for a in args]):
-            print("please use cards from 0 to {} only".format(n_total - 1))
+        if any([a >= n_cards_total for a in args]):
+            print("please use cards from 0 to {} only".format(n_cards_total - 1))
             exit(0)
         true_hand_A = args[3:]
     else:
         true_hand_A = list(range(n_cards_A))
 
-    succ, options = run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand_A)
+    succ, options = run_dfs_search(n_cards_A, n_cards_B, n_cards_C, true_hand_A)
     
     if succ:
         print('solution found! (dfs approach)')
         for opt in options:
             print('\t{}'.format(opt))
+
+        possible_hands_C = get_combs(n_cards_C, n_cards_total)
+
+        for i, phc in enumerate(possible_hands_C):
+            print('\nPossible hand of C {}: {}'.format(i, phc))
+            filtered = options
+            for card in phc:
+                filtered = filter(lambda x: card not in x, options)
+            for option in filtered:
+                print(option)
     else:
         print('no solution (dfs approach)')
