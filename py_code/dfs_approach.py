@@ -61,6 +61,9 @@ class Rule_1:
         self.table.set_list(checks, True)
 
         return (True, checks)
+
+    def remove_checks(self, checks):
+        self.table.set_list(checks, False)
             
 class Rule_2:
     def __init__(self, n_cards_in_hand, n_cards_C, n_cards_total):
@@ -131,23 +134,37 @@ def run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
     r1.add_hand(true_hand)
     r2.add_hand(true_hand)
 
-    presented_options = [true_hand]
+    presented_options = [(None, true_hand, None, None)]
 
     possible_hands = get_combs(n_cards_A, n_cards_total)
+    i = 0
+    while True:
+        while i < len(possible_hands):
+            # possibly add hand possible_hands[i]
+            hand = possible_hands[i]
+        
+            # are we allowed to add this decoy hand to our list of options according to rule 1?
+            allowed, checks1 = r1.add_hand(hand)
+            if not allowed:
+                i += 1
+                continue
 
-    for hand in possible_hands:
-        # are we allowed to add this decoy hand to our list of options according to rule 1?
-        allowed, _ = r1.add_hand(hand)
-        if not allowed:
-            continue
+            # after adding this hand to our list of options, does rule 2 tell us we successfully created enough insecurity for Cath?
+            succ, checks2 = r2.add_hand(hand)
 
-        presented_options.append(hand)
-
-        # after adding this hand to our list of options, does rule 2 tell us we successfully created enough insecurity for Cath?
-        succ, _ = r2.add_hand(hand)
-        if succ:
-            return (True, presented_options)
-
+            presented_options.append((i, hand, checks1, checks2))
+            if succ:
+                return (True, [po[1] for po in presented_options])
+            i += 1
+            
+        removed_hand = presented_options[-1]
+        presented_options = presented_options[:-1]
+        if len(presented_options) == 0:
+            # we removed the true hand because no solution exists with the true hand.
+            break
+        r1.remove_checks(removed_hand[2])
+        r2.remove_checks(removed_hand[3])
+        i = removed_hand[0] + 1
     return (False, [])
 
 if __name__ == "__main__":
