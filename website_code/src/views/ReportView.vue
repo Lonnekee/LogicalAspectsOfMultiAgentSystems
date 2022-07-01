@@ -10,7 +10,7 @@
 export default {
   data() {
     return {
-      reportURL: "https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf"
+      reportURL: "report.pdf" // https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf
     }
   }
 }
