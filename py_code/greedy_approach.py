@@ -1,4 +1,6 @@
 def get_combs(n_cards_in_comb, n_cards_total):
+    if n_cards_in_comb == 0:
+        return [[]]
     combs = [[] for i in range(n_cards_total)]
     combs[0] = [[[]] for i in range(n_cards_total)]
     for i in range(1, n_cards_total):
@@ -81,16 +83,19 @@ class Rule_2:
 
         cards_not_in_hand = [x for x in range(self.n_cards_total) if x not in hand]
 
-        for idx_comb in self.all_possible_index_combs_for_with_hand_card:
-            comb = [cards_not_in_hand[idx] for idx in idx_comb]
-            hand_card_insertion_idx = 0
-            for card_in_hand in hand:
-                while hand_card_insertion_idx < len(comb) and comb[hand_card_insertion_idx] < card_in_hand:
-                    hand_card_insertion_idx += 1
-                
-                # insert hand card in combinaton of non-hand cards
-                comb_ = comb[:hand_card_insertion_idx] + [card_in_hand] + comb[hand_card_insertion_idx:]
-                possible_checks.append((comb_, hand_card_insertion_idx + 1))
+        if self.all_possible_index_combs_for_with_hand_card != []:
+            for idx_comb in self.all_possible_index_combs_for_with_hand_card:
+                comb = [cards_not_in_hand[idx] for idx in idx_comb]
+                hand_card_insertion_idx = 0
+                for card_in_hand in hand:
+                    while hand_card_insertion_idx < len(comb) and comb[hand_card_insertion_idx] < card_in_hand:
+                        hand_card_insertion_idx += 1
+                    
+                    # insert hand card in combinaton of non-hand cards
+                    comb_ = comb[:hand_card_insertion_idx] + [card_in_hand] + comb[hand_card_insertion_idx:]
+                    possible_checks.append((comb_, hand_card_insertion_idx + 1))
+        else:
+            possible_checks = [(card_in_hand, 1) for card_in_hand in hand]
 
         for idx_comb in self.all_possible_index_combs_for_without_hand_card:
             comb = [cards_not_in_hand[idx] for idx in idx_comb]
@@ -116,6 +121,9 @@ class Rule_2:
 def run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand):
     n_cards_total = n_cards_A + n_cards_B + n_cards_C
     max_overlap = n_cards_A - n_cards_C - 1
+
+    if max_overlap < 0:
+        return (False, [])
 
     r1 = Rule_1(n_cards_A, max_overlap + 1, n_cards_total)
     r2 = Rule_2(n_cards_A, n_cards_C, n_cards_total)
