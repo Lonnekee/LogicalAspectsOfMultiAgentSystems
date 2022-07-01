@@ -1,6 +1,9 @@
 <template>
   <div class="application">
-    <h1>This is the page that will host the application.</h1>
+    <p>
+      The application has been written in Python and can be downloaded
+      <a href="https://github.com/Lonnekee/LogicalAspectsOfMultiAgentSystems/tree/main/py_code">here</a>.
+    </p>
   </div>
 </template>
 
