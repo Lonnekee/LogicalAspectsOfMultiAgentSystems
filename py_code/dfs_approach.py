@@ -194,8 +194,8 @@ if __name__ == "__main__":
     succ, options = run_greedy_search(n_cards_A, n_cards_B, n_cards_C, true_hand_A)
     
     if succ:
-        print('solution found! (greedy approach)')
+        print('solution found! (dfs approach)')
         for opt in options:
             print('\t{}'.format(opt))
     else:
-        print('no solution (greedy approach)')
+        print('no solution (dfs approach)')
