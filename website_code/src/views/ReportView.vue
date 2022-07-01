@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       report: null,
-      reportURL: "report.pdf" // https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf
+      reportURL: "https://lonnekee.github.io/LogicalAspectsOfMultiAgentSystems/report.pdf"
     }
   },
   mounted() {
