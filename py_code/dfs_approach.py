@@ -209,9 +209,10 @@ if __name__ == "__main__":
             filtered = options
             for card in phb:
                 filtered = list(filter(lambda x: card not in x, filtered))
-                print(card, filtered)
             for option in filtered:
                 print(option)
+            if len(filtered) == 0:
+                print('no options left')
 
 
         possible_hands_C = get_combs(n_cards_C, n_cards_total)
@@ -223,5 +224,7 @@ if __name__ == "__main__":
                 filtered = list(filter(lambda x: card not in x, options))
             for option in filtered:
                 print(option)
+            if len(filtered) == 0:
+                print('no options left')
     else:
         print('no solution (dfs approach)')
