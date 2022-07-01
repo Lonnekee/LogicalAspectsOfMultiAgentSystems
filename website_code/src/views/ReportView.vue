@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios';
 
 export default {
@@ -15,8 +15,8 @@ export default {
     }
   },
   mounted() {
-    axios.get(this.reportURL)
-        .then(response => { this.report = response.data; })
+    axios.get(this.data().reportURL)
+        .then(response => { this.data().report = response.data; })
   }
 }
 </script>
